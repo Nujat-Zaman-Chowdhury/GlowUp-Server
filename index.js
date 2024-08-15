@@ -41,9 +41,20 @@ async function run() {
 
     //get all products from db 
     app.get("/all-products", async (req, res) => {
-      const result = await productCollection.find().toArray();
+      const page = parseFloat(req.query.page) - 1;
+      const size = parseFloat(req.query.size);
+      const result = await productCollection.find().skip(page * size).limit(size).toArray();
       res.send(result);
     });
+
+ 
+  app.get('/products-count',async(req,res)=>{
+   
+    const count = await productCollection.countDocuments();
+    // console.log(count);
+    res.send({count})
+  })
+
     //get all categories from db 
     app.get("/categories", async (req, res) => {
       const result = await categoryCollection.find().toArray();
