@@ -37,10 +37,16 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     const productCollection = client.db("glowUpDB").collection("products");
+    const categoryCollection = client.db("glowUpDB").collection("categories");
 
     //get all products from db 
     app.get("/all-products", async (req, res) => {
       const result = await productCollection.find().toArray();
+      res.send(result);
+    });
+    //get all categories from db 
+    app.get("/categories", async (req, res) => {
+      const result = await categoryCollection.find().toArray();
       res.send(result);
     });
 
