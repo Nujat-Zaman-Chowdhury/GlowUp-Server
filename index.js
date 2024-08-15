@@ -43,20 +43,30 @@ async function run() {
     app.get("/all-products", async (req, res) => {
       const page = parseFloat(req.query.page) - 1;
       const size = parseFloat(req.query.size);
-      const search = req.query.search;
+      const search = req.query.search || ''; 
+      const sortType = req.query.sort;
       let query = {
         productName:{
           $regex: search, 
           $options: 'i' 
         }
       }
-      const result = await productCollection.find(query).skip(page * size).limit(size).toArray();
+      let sortOrder = {};
+  if (sortType === "price-asc") {
+    sortOrder = { price: 1 }; // Ascending order
+  } else if (sortType === "price-desc") {
+    sortOrder = { price: -1 }; // Descending order
+  } else if (sortType === "newest") {
+    sortOrder = { createdAt: -1 }; // Newest first
+  }
+      const result = await productCollection.find(query).sort(sortOrder).skip(page * size).limit(size).toArray();
       res.send(result);
     });
 
  
   app.get('/products-count',async(req,res)=>{
-    const search = req.query.search;
+    const search = req.query.search || ''; 
+    
       let query = {
         productName:{
           $regex: search, 
