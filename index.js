@@ -45,20 +45,43 @@ async function run() {
       const size = parseFloat(req.query.size);
       const search = req.query.search || ''; 
       const sortType = req.query.sort;
-      let query = {
-        productName:{
-          $regex: search, 
-          $options: 'i' 
-        }
-      }
-      let sortOrder = {};
-  if (sortType === "price-asc") {
-    sortOrder = { price: 1 }; // Ascending order
-  } else if (sortType === "price-desc") {
-    sortOrder = { price: -1 }; // Descending order
-  } else if (sortType === "newest") {
-    sortOrder = { createdAt: -1 }; // Newest first
+
+      const brand = req.query.brand || ''; 
+  const category = req.query.category || ''; 
+  const priceRange = req.query.price || '';
+
+  let query = {};
+
+  if (search) {
+    query.productName = {
+      $regex: search, 
+      $options: 'i' 
+    };
   }
+  let sortOrder = {};
+  if (sortType === "price-asc") {
+    sortOrder = { price: 1 }; 
+  } else if (sortType === "price-desc") {
+    sortOrder = { price: -1 }; 
+  } else if (sortType === "newest") {
+    sortOrder = { creationDate: -1 }; 
+  }
+
+  if (brand) {
+    query.brandName = brand;
+  }
+
+  if (category) {
+    query.category = category;
+  }
+
+  if (priceRange) {
+    const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+    query.price = { $gte: minPrice, $lte: maxPrice };
+  }
+
+
+
       const result = await productCollection.find(query).sort(sortOrder).skip(page * size).limit(size).toArray();
       res.send(result);
     });
@@ -66,13 +89,32 @@ async function run() {
  
   app.get('/products-count',async(req,res)=>{
     const search = req.query.search || ''; 
+
+    const brand = req.query.brand || ''; 
+  const category = req.query.category || ''; 
+  const priceRange = req.query.price || '';
     
-      let query = {
-        productName:{
-          $regex: search, 
-          $options: 'i' 
-        }
+  let query = {};
+
+  if (search) {
+    query.productName = {
+      $regex: search, 
+      $options: 'i' 
+    };
+  }
+      if (brand) {
+        query.brand = brand;
       }
+    
+      if (category) {
+        query.category = category;
+      }
+    
+      if (priceRange) {
+        const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+        query.price = { $gte: minPrice, $lte: maxPrice };
+      }
+      // console.log(query);
     const count = await productCollection.countDocuments(query);
     // console.log(count);
     res.send({count})
