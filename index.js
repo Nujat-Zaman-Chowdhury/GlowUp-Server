@@ -10,6 +10,8 @@ const corsOptions = {
   origin: [
     "http://localhost:5173",
      "http://localhost:5174",
+     "https://glowup-3efba.firebaseapp.com",
+     "https://glowup-3efba.web.app"
      
     ],
   credentials: true,
