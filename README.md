@@ -31,10 +31,12 @@ This project is a backend API for managing products, built using Node.js and Exp
    ```bash
    git clone <backend-repo-url>
    cd backend
+
 2. Install dependencies:
-``bash
+```bash
 Copy code
 npm install
+```
 
 3. Configure environment variables:
 
@@ -45,9 +47,10 @@ DB_PASS=your_db_password
 
 4. Start the server:
 
-``bash
+```bash
 Copy code
 npm start
+```
 
 The server will be available at http://localhost:8000.
 
